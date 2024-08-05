@@ -1,0 +1,31 @@
+# See: https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+members = ["lib/*"]
+default-members = ["lib/sysml"]
+resolver = "2"
+
+[workspace.package]
+version = "0.0.0"
+authors = ["Arto Bendiken"]
+edition = "2021"
+rust-version = "1.70"
+description = "SysML.rs"
+#documentation = ""
+readme = true
+homepage = "https://github.com/artob/sysml.rs"
+repository = "https://github.com/artob/sysml.rs"
+license = "Unlicense"
+keywords = ["sysml"]
+categories = ["no-std"]
+publish = true
+
+[workspace.dependencies]
+sysml = { path = "lib/sysml" }
+sysml-model = { path = "lib/sysml-model" }
+sysml-parser = { path = "lib/sysml-parser" }
+
+[patch.crates-io]
+sysml = { path = "lib/sysml" }
+sysml-model = { path = "lib/sysml-model" }
+sysml-parser = { path = "lib/sysml-parser" }

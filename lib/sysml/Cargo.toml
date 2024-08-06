@@ -16,7 +16,7 @@ publish.workspace = true
 
 [features]
 default = ["std", "tracing"]
-std = ["sysml-parser/std", "tracing?/std"]
+std = ["sysml-model/std", "sysml-parser/std", "tracing?/std"]
 tracing = ["dep:tracing", "sysml-parser/tracing"]
 
 [dependencies]

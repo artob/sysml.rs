@@ -11,7 +11,7 @@
 #![allow(unused)]
 
 #[doc(hidden)]
-pub mod prelude;
+use sysml_model::prelude;
 
 mod feature;
 pub use feature::*;

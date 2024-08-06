@@ -15,6 +15,7 @@ categories.workspace = true
 publish.workspace = true
 
 [features]
-default = []
+default = ["std"]
+std = []
 
 [dependencies]

@@ -6,3 +6,13 @@ use crate::{Block, prelude::Vec};
 pub struct Package {
     pub blocks: Vec<Block>,
 }
+
+impl Package {
+    pub fn new() -> Self {
+        Self { blocks: Vec::new() }
+    }
+
+    pub fn with_blocks(blocks: Vec<Block>) -> Self {
+        Self { blocks }
+    }
+}

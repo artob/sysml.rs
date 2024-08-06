@@ -12,6 +12,9 @@
 mod block;
 pub use block::*;
 
+mod element;
+pub use element::*;
+
 mod package;
 pub use package::*;
 

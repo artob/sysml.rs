@@ -9,11 +9,11 @@
 #![no_std]
 #![allow(unused)]
 
-#[doc(hidden)]
-pub mod prelude;
-
 mod block;
 pub use block::*;
 
 mod package;
 pub use package::*;
+
+#[doc(hidden)]
+pub mod prelude;

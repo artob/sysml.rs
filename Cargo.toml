@@ -2,7 +2,7 @@
 
 [workspace]
 members = ["lib/*"]
-default-members = ["lib/sysml"]
+default-members = ["lib/*"]
 resolver = "2"
 
 [workspace.package]

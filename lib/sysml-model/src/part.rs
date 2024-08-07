@@ -1,3 +1,5 @@
 // This is free and unencumbered software released into the public domain.
 
-pub trait Block {}
+use crate::Item;
+
+pub trait Part: Item {}

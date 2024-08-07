@@ -11,14 +11,41 @@
 
 pub use kerml::prelude;
 pub use kerml::core::{Classifier, Feature, Type};
-pub use kerml::kernel::{Association, Class, Connector, DataType, /*Package,*/ Structure};
+pub use kerml::kernel::{Association, Class, Connector, DataType, Package, Structure};
 pub use kerml::root::{Annotation, Dependency, Element, Namespace, Relationship};
+
+mod attribute;
+pub use attribute::*;
 
 mod block;
 pub use block::*;
 
-mod element;
-pub use element::*;
+mod connection;
+pub use connection::*;
 
-mod package;
-pub use package::*;
+mod definition;
+pub use definition::*;
+
+mod enumeration;
+pub use enumeration::*;
+
+mod import;
+pub use import::*;
+
+mod interface;
+pub use interface::*;
+
+mod item;
+pub use item::*;
+
+mod occurrence;
+pub use occurrence::*;
+
+mod part;
+pub use part::*;
+
+mod port;
+pub use port::*;
+
+mod usage;
+pub use usage::*;

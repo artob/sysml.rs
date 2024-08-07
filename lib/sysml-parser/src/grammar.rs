@@ -1,5 +1,6 @@
 // This is free and unencumbered software released into the public domain.
 
+use crate::{ParsedBlock, ParsedPackage};
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -9,9 +10,8 @@ use nom::{
     sequence::{delimited, pair},
     IResult
 };
-use sysml_model::{Block, Package};
 
-pub fn package(input: &str) -> IResult<&str, Package> {
+pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
     let (input, _) = tag("package")(input)?;
     let (input, _) = multispace1(input)?;
     let (input, name) = identifier(input)?;
@@ -22,10 +22,10 @@ pub fn package(input: &str) -> IResult<&str, Package> {
         char('}')
     )(input)?;
 
-    Ok((input, Package::with_blocks(name, blocks) ))
+    Ok((input, ParsedPackage::with_blocks(name, blocks) ))
 }
 
-pub fn block(input: &str) -> IResult<&str, Block> {
+pub fn block(input: &str) -> IResult<&str, ParsedBlock> {
     let (input, _) = tag("block")(input)?;
     let (input, _) = multispace1(input)?;
     let (input, name) = identifier(input)?;
@@ -36,7 +36,7 @@ pub fn block(input: &str) -> IResult<&str, Block> {
         char('}')
     )(input)?;
 
-    Ok((input, Block::new(name)))
+    Ok((input, ParsedBlock::new(name)))
 }
 
 pub fn identifier(input: &str) -> IResult<&str, &str> {
@@ -49,8 +49,4 @@ pub fn identifier(input: &str) -> IResult<&str, &str> {
 }
 
 #[cfg(test)]
-mod tests {
-    extern crate std;
-    //use crate::prelude::*;
-    //use super::*;
-}
+mod tests {}

@@ -20,5 +20,8 @@ pub use element::*;
 mod namespace;
 pub use namespace::*;
 
+mod qualified_name;
+pub use qualified_name::*;
+
 mod relationship;
 pub use relationship::*;

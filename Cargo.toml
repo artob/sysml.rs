@@ -16,16 +16,18 @@ readme = true
 homepage = "https://github.com/artob/sysml.rs"
 repository = "https://github.com/artob/sysml.rs"
 license = "Unlicense"
-keywords = ["sysml"]
+keywords = ["sysml", "kerml"]
 categories = ["no-std"]
 publish = true
 
 [workspace.dependencies]
+kerml = { path = "lib/kerml" }
 sysml = { path = "lib/sysml" }
 sysml-model = { path = "lib/sysml-model" }
 sysml-parser = { path = "lib/sysml-parser" }
 
 [patch.crates-io]
+kerml = { path = "lib/kerml" }
 sysml = { path = "lib/sysml" }
 sysml-model = { path = "lib/sysml-model" }
 sysml-parser = { path = "lib/sysml-parser" }

@@ -15,8 +15,8 @@ impl Block {
 }
 
 impl Element for Block {
-    fn name(&self) -> &str {
-        &self.name
+    fn name(&self) -> Option<&str> {
+        Some(&self.name)
     }
 
     fn short_name(&self) -> Option<&str> {

@@ -9,6 +9,8 @@
 #![no_std]
 #![allow(unused)]
 
+pub use kerml::*;
+
 mod block;
 pub use block::*;
 
@@ -17,6 +19,3 @@ pub use element::*;
 
 mod package;
 pub use package::*;
-
-#[doc(hidden)]
-pub mod prelude;

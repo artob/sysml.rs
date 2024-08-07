@@ -1,5 +1,5 @@
 [package]
-name = "sysml-model"
+name = "kerml"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -19,4 +19,3 @@ default = ["std"]
 std = []
 
 [dependencies]
-kerml = "0.0.0"

@@ -28,8 +28,8 @@ impl Package {
 }
 
 impl Element for Package {
-    fn name(&self) -> &str {
-        &self.name
+    fn name(&self) -> Option<&str> {
+        Some(&self.name)
     }
 
     fn short_name(&self) -> Option<&str> {

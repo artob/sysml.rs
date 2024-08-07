@@ -1,7 +1,7 @@
 // This is free and unencumbered software released into the public domain.
 
 use crate::ParsedBlock;
-use sysml_model::{prelude::{String, ToString, Vec}, Element, Namespace, Package};
+use sysml_model::{prelude::{Rc, String, ToString, Vec}, Element, Namespace, Package};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedPackage {
@@ -11,12 +11,12 @@ pub struct ParsedPackage {
 }
 
 impl ParsedPackage {
-    pub fn new(name: impl ToString) -> Self {
+    pub fn new(name: impl ToString) -> Rc<Self> {
         Self::with_blocks(name, Vec::new())
     }
 
-    pub fn with_blocks(name: impl ToString, blocks: Vec<ParsedBlock>) -> Self {
-        Self { name: name.to_string(), short_name: None, blocks }
+    pub fn with_blocks(name: impl ToString, blocks: Vec<ParsedBlock>) -> Rc<Self> {
+        Rc::new(Self { name: name.to_string(), short_name: None, blocks })
     }
 
     pub fn blocks(&self) -> &Vec<ParsedBlock> {

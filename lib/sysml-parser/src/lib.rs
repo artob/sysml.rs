@@ -11,6 +11,9 @@
 mod block;
 pub use block::*;
 
+mod error;
+pub use error::*;
+
 pub mod grammar;
 
 mod package;

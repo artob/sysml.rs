@@ -16,6 +16,9 @@ pub use error::*;
 
 pub mod grammar;
 
+mod import;
+pub use import::*;
+
 mod package;
 pub use package::*;
 

@@ -3,6 +3,10 @@
 use crate::Relationship;
 
 pub trait Import: Relationship {
+    fn visibility(&self) -> VisibilityKind {
+        VisibilityKind::Public
+    }
+
     fn is_recursive(&self) -> bool {
         false
     }
@@ -10,4 +14,11 @@ pub trait Import: Relationship {
     fn is_import_all(&self) -> bool {
         false
     }
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub enum VisibilityKind {
+    #[default]
+    Public,
+    Private,
 }

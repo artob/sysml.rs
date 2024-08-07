@@ -10,9 +10,9 @@
 #![allow(unused)]
 
 pub use kerml::prelude;
-pub use kerml::core::{Classifier, Feature, Type};
-pub use kerml::kernel::{Association, Class, Connector, DataType, Package, Structure};
-pub use kerml::root::{Annotation, Dependency, Element, Namespace, Relationship};
+pub use kerml::core::*;
+pub use kerml::kernel::*;
+pub use kerml::root::*;
 
 mod attribute;
 pub use attribute::*;

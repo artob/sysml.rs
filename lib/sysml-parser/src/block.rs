@@ -1,16 +1,18 @@
 // This is free and unencumbered software released into the public domain.
 
-use sysml_model::{prelude::{String, ToString}, Block, Element, Item, Part};
+use crate::ParsedImport;
+use sysml_model::{prelude::{String, ToString, Vec}, Block, Element, Item, Part};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedBlock {
     pub(crate) name: String,
     pub(crate) short_name: Option<String>,
+    pub(crate) imports: Vec<ParsedImport>,
 }
 
 impl ParsedBlock {
     pub fn new(name: impl ToString) -> Self {
-        Self { name: name.to_string(), short_name: None }
+        Self { name: name.to_string(), ..Default::default() }
     }
 }
 

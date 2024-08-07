@@ -18,3 +18,14 @@ fn parse_empty_block() -> ParseResult<'static, ()> {
     assert_eq!(parse_string(input)?.to_string(), reference.to_string());
     Ok(())
 }
+
+#[test]
+fn parse_block_imports() -> ParseResult<'static, ()> {
+    let input = r#"package MyPackage {
+        block MyBlock {
+            import Protolog::*;
+        }
+    }"#;
+    let _ = parse_string(input)?;
+    Ok(())
+}

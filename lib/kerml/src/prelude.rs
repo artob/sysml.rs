@@ -12,11 +12,15 @@ extern crate alloc;
 use std as alloc;
 
 pub use alloc::{
+    boxed::Box,
+    format,
+    rc::Rc,
+    string::{String, ToString},
     vec,
     vec::Vec,
-    string::{String, ToString},
 };
 
 pub use core::{
+    fmt,
     result::Result,
 };

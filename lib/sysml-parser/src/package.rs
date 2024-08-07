@@ -1,32 +1,35 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::ParsedBlock;
+use crate::ParsedMember;
 use sysml_model::{prelude::{Rc, String, ToString, Vec}, Element, Namespace, Package};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedPackage {
     pub(crate) name: String,
     pub(crate) short_name: Option<String>,
-    pub(crate) blocks: Vec<ParsedBlock>,
+    pub(crate) members: Vec<ParsedMember>,
 }
 
 impl ParsedPackage {
     pub fn new(name: impl ToString) -> Rc<Self> {
-        Self::with_blocks(name, Vec::new())
+        Self::with_members(name, Vec::new())
     }
 
-    pub fn with_blocks(name: impl ToString, blocks: Vec<ParsedBlock>) -> Rc<Self> {
-        Rc::new(Self { name: name.to_string(), short_name: None, blocks })
+    pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Rc<Self> {
+        Rc::new(Self { name: name.to_string(), short_name: None, members })
     }
 
-    pub fn blocks(&self) -> &Vec<ParsedBlock> {
-        &self.blocks
+    pub fn members(&self) -> &Vec<ParsedMember> {
+        &self.members
     }
 
-    pub fn add_block(&mut self, block: ParsedBlock) {
-        self.blocks.push(block);
+    pub fn add_member(&mut self, member: ParsedMember) {
+        self.members.push(member);
     }
 }
+
+impl Package for ParsedPackage {}
+impl Namespace for ParsedPackage {}
 
 impl Element for ParsedPackage {
     fn name(&self) -> Option<&str> {
@@ -37,9 +40,6 @@ impl Element for ParsedPackage {
         self.short_name.as_deref()
     }
 }
-
-impl Namespace for ParsedPackage {}
-impl Package for ParsedPackage {}
 
 #[cfg(test)]
 mod tests {

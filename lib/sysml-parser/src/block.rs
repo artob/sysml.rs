@@ -1,13 +1,13 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::ParsedImport;
+use crate::ParsedMember;
 use sysml_model::{prelude::{String, ToString, Vec}, Block, Element, Item, Part};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedBlock {
     pub(crate) name: String,
     pub(crate) short_name: Option<String>,
-    pub(crate) imports: Vec<ParsedImport>,
+    pub(crate) members: Vec<ParsedMember>,
 }
 
 impl ParsedBlock {
@@ -15,6 +15,10 @@ impl ParsedBlock {
         Self { name: name.to_string(), ..Default::default() }
     }
 }
+
+impl Block for ParsedBlock {}
+impl Part for ParsedBlock {}
+impl Item for ParsedBlock {}
 
 impl Element for ParsedBlock {
     fn name(&self) -> Option<&str> {
@@ -25,10 +29,6 @@ impl Element for ParsedBlock {
         self.short_name.as_deref()
     }
 }
-
-impl Item for ParsedBlock {}
-impl Part for ParsedBlock {}
-impl Block for ParsedBlock {}
 
 #[cfg(test)]
 mod tests {

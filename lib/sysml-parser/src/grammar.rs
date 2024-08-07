@@ -1,6 +1,6 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::{prelude::{Rc, String, Vec}, ParsedBlock, ParsedImport, ParsedPackage};
+use crate::{prelude::{Rc, String, Vec}, ParsedBlock, ParsedImport, ParsedMember, ParsedPackage};
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_while},
@@ -17,47 +17,56 @@ pub fn package(input: &str) -> IResult<&str, Rc<dyn Package>> {
     let (input, _) = multispace1(input)?;
     let (input, name) = identifier(input)?;
     let (input, _) = multispace0(input)?;
-    let (input, blocks) = delimited(
+    let (input, members) = delimited(
         char('{'),
-        many0(preceded(multispace0, block)),
+        preceded(multispace0, members),
         preceded(multispace0, char('}'))
     )(input)?;
     let (input, _) = multispace0(input)?;
 
-    Ok((input, ParsedPackage::with_blocks(name, blocks) ))
+    Ok((input, Rc::new(ParsedPackage {
+        name: String::from(name),
+        short_name: None, // TODO
+        members,
+    })))
 }
 
-pub fn block(input: &str) -> IResult<&str, ParsedBlock> {
+pub fn block(input: &str) -> IResult<&str, ParsedMember> {
     let (input, _) = tag("block")(input)?;
     let (input, _) = multispace1(input)?;
     let (input, name) = identifier(input)?;
     let (input, _) = multispace0(input)?;
-    let (input, imports) = delimited(
+    let (input, members) = delimited(
         char('{'),
-        preceded(multispace0, block_content),
+        preceded(multispace0, members),
         preceded(multispace0, char('}'))
     )(input)?;
 
-    Ok((input, ParsedBlock {
+    Ok((input, ParsedMember::Block(ParsedBlock {
         name: String::from(name),
         short_name: None, // TODO
-        imports,
-    }))
+        members,
+    })))
 }
 
-fn block_content(input: &str) -> IResult<&str, Vec<ParsedImport>> {
-    let (input, imports) = many0(terminated(import, multispace0))(input)?;
+fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
+    let (input, members) = many0(
+        alt((
+            terminated(import, multispace0),
+            terminated(block, multispace0)
+        ))
+    )(input)?;
 
-    Ok((input, imports))
+    Ok((input, members))
 }
 
-fn import(input: &str) -> IResult<&str, ParsedImport> {
+fn import(input: &str) -> IResult<&str, ParsedMember> {
     let (input, _) = tag("import")(input)?;
     let (input, _) = multispace1(input)?;
     let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
     let (input, _) = char(';')(input)?;
 
-    Ok((input, ParsedImport::new(name)))
+    Ok((input, ParsedMember::Import(ParsedImport::new(name))))
 }
 
 pub fn identifier(input: &str) -> IResult<&str, &str> {

@@ -19,6 +19,9 @@ pub mod grammar;
 mod import;
 pub use import::*;
 
+mod member;
+pub use member::*;
+
 mod package;
 pub use package::*;
 

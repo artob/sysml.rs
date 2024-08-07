@@ -1,6 +1,12 @@
 // This is free and unencumbered software released into the public domain.
 
-pub trait Definition {}
+use crate::Classifier;
+
+pub trait Definition: Classifier {
+    fn is_variation(&self) -> bool {
+        false
+    }
+}
 
 pub enum DefinitionElement {
     Package,

@@ -13,6 +13,6 @@ impl ParsedImport {
     }
 }
 
-impl Element for ParsedImport {}
-impl Relationship for ParsedImport {}
 impl Import for ParsedImport {}
+impl Relationship for ParsedImport {}
+impl Element for ParsedImport {}

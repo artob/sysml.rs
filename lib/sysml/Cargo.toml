@@ -20,6 +20,6 @@ std = ["sysml-model/std", "sysml-parser/std", "tracing?/std"]
 tracing = ["dep:tracing", "sysml-parser/tracing"]
 
 [dependencies]
-sysml-model = "0.0.0"
-sysml-parser = "0.0.0"
+sysml-model = "0.0.1"
+sysml-parser = "0.0.1"
 tracing = { version = "0.1", optional = true, default-features = false }

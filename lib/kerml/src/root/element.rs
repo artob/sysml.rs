@@ -15,4 +15,10 @@ pub trait Element {
     fn short_name(&self) -> Option<&str> {
         None
     }
+
+    /// Whether this [`Element`] is contained in the ownership tree of
+    /// a library model.
+    fn is_library_element(&self) -> bool {
+        false
+    }
 }

@@ -19,8 +19,8 @@ impl Package {
     }
 
     pub fn blocks(&self) -> &Vec<Block> {
-            &self.blocks
-        }
+        &self.blocks
+    }
 
     pub fn add_block(&mut self, block: Block) {
         self.blocks.push(block);

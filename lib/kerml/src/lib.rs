@@ -8,11 +8,14 @@
 
 #![no_std]
 
-mod element;
-pub use element::*;
+pub mod core;
+pub use core::*;
 
-mod namespace;
-pub use namespace::*;
+pub mod kernel;
+pub use kernel::*;
 
 #[doc(hidden)]
 pub mod prelude;
+
+pub mod root;
+pub use root::*;

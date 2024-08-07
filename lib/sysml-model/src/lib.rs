@@ -9,7 +9,10 @@
 #![no_std]
 #![allow(unused)]
 
-pub use kerml::*;
+pub use kerml::prelude;
+pub use kerml::core::{Classifier, Feature, Type};
+pub use kerml::kernel::{Association, Class, Connector, DataType, /*Package,*/ Structure};
+pub use kerml::root::{Annotation, Dependency, Element, Namespace, Relationship};
 
 mod block;
 pub use block::*;

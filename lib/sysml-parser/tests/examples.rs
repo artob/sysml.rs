@@ -7,9 +7,9 @@ fn parse_example_1() -> ParseResult<'static, ()> {
     let input = r#"package MyPackage {
         import Protolog::*;
 
-        block MyBlock1;
+        block myBlock1 : MyBlockType1;
 
-        block MyBlock2 {}
+        block myBlock2 : MyBlockType2 {}
     }"#;
     let _ = parse_string(input)?;
     Ok(())

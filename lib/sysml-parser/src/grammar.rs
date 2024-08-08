@@ -22,10 +22,30 @@ pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
     }))
 }
 
-pub fn block(input: &str) -> IResult<&str, ParsedMember> {
+pub fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
+    let (input, members) = many0(
+        alt((
+            terminated(import, multispace0),
+            terminated(block_usage, multispace0)
+        ))
+    )(input)?;
+
+    Ok((input, members))
+}
+
+pub fn import(input: &str) -> IResult<&str, ParsedMember> {
+    let (input, _) = tag("import")(input)?;
+    let (input, _) = multispace1(input)?;
+    let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
+    let (input, _) = char(';')(input)?;
+
+    Ok((input, ParsedMember::Import(ParsedImport::new(name))))
+}
+
+pub fn block_usage(input: &str) -> IResult<&str, ParsedMember> {
     let (input, (name, short_name, members)) = element(input, "block")?;
 
-    Ok((input, ParsedMember::Block(ParsedBlock {
+    Ok((input, ParsedMember::BlockUsage(ParsedBlock {
         name: name.map(String::from),
         short_name: short_name.map(String::from),
         members,
@@ -37,6 +57,7 @@ pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (Option<
     let (input, _) = multispace1(input)?;
     let (input, (name, short_name)) = identification(input)?;
     let (input, _) = multispace0(input)?;
+    let (input, _) = opt(delimited(terminated(char(':'), multispace0), qualified_name, multispace0))(input)?;
     let (input, members) = alt((
         map(char(';'), |_| Vec::new()),
         delimited(
@@ -48,24 +69,8 @@ pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (Option<
     Ok((input, (name, short_name, members)))
 }
 
-fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
-    let (input, members) = many0(
-        alt((
-            terminated(import, multispace0),
-            terminated(block, multispace0)
-        ))
-    )(input)?;
-
-    Ok((input, members))
-}
-
-fn import(input: &str) -> IResult<&str, ParsedMember> {
-    let (input, _) = tag("import")(input)?;
-    let (input, _) = multispace1(input)?;
-    let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
-    let (input, _) = char(';')(input)?;
-
-    Ok((input, ParsedMember::Import(ParsedImport::new(name))))
+pub fn qualified_name(input: &str) -> IResult<&str, &str> {
+    name(input) // TODO
 }
 
 pub fn identification(input: &str) -> IResult<&str, (Option<&str>, Option<&str>)> {

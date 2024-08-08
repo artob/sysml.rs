@@ -6,7 +6,7 @@ use sysml_model::Element;
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum ParsedMember {
     Import(ParsedImport),
-    Block(ParsedBlock)
+    BlockUsage(ParsedBlock)
 }
 
 impl Element for ParsedMember {}

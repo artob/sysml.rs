@@ -20,7 +20,4 @@ pub use alloc::{
     vec::Vec,
 };
 
-pub use core::{
-    fmt,
-    result::Result,
-};
+pub use core::{fmt, result::Result};

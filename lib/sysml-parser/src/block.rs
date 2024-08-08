@@ -1,7 +1,10 @@
 // This is free and unencumbered software released into the public domain.
 
 use crate::ParsedMember;
-use sysml_model::{prelude::{String, ToString, Vec}, Block, Element, Item, Part};
+use sysml_model::{
+    prelude::{String, ToString, Vec},
+    Block, Element, Item, Part,
+};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedBlock {
@@ -12,7 +15,10 @@ pub struct ParsedBlock {
 
 impl ParsedBlock {
     pub fn new(name: impl ToString) -> Self {
-        Self { name: Some(name.to_string()), ..Default::default() }
+        Self {
+            name: Some(name.to_string()),
+            ..Default::default()
+        }
     }
 }
 
@@ -37,6 +43,9 @@ mod tests {
 
     #[test]
     fn create_block() {
-        assert_eq!(ParsedBlock::new("MyBlock").name, Some("MyBlock".to_string()));
+        assert_eq!(
+            ParsedBlock::new("MyBlock").name,
+            Some("MyBlock".to_string())
+        );
     }
 }

@@ -9,9 +9,9 @@
 #![no_std]
 #![allow(unused)]
 
-pub use kerml::prelude;
 pub use kerml::core::*;
 pub use kerml::kernel::*;
+pub use kerml::prelude;
 pub use kerml::root::*;
 
 mod attribute;

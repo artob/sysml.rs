@@ -1,7 +1,10 @@
 // This is free and unencumbered software released into the public domain.
 
 use crate::ParsedMember;
-use sysml_model::{prelude::{Rc, String, ToString, Vec}, Element, Namespace, Package};
+use sysml_model::{
+    prelude::{Rc, String, ToString, Vec},
+    Element, Namespace, Package,
+};
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedPackage {
@@ -16,7 +19,11 @@ impl ParsedPackage {
     }
 
     pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Rc<Self> {
-        Rc::new(Self { name: Some(name.to_string()), short_name: None, members })
+        Rc::new(Self {
+            name: Some(name.to_string()),
+            short_name: None,
+            members,
+        })
     }
 
     pub fn members(&self) -> &Vec<ParsedMember> {
@@ -48,6 +55,9 @@ mod tests {
 
     #[test]
     fn create_package() {
-        assert_eq!(ParsedPackage::new("MyPackage").name, Some("MyPackage".to_string()));
+        assert_eq!(
+            ParsedPackage::new("MyPackage").name,
+            Some("MyPackage".to_string())
+        );
     }
 }

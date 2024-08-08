@@ -15,7 +15,7 @@ pub trait Type: Namespace {
         false
     }
 
-    fn specializes(&self ,_supertype: &Self) -> bool {
+    fn specializes(&self, _supertype: &Self) -> bool {
         false
     }
 }

@@ -1,3 +1,7 @@
 // This is free and unencumbered software released into the public domain.
 
-pub trait Item {}
+use crate::{OccurrenceDefinition, OccurrenceUsage, Structure};
+
+pub trait ItemDefinition: OccurrenceDefinition + Structure {}
+
+pub trait ItemUsage: OccurrenceUsage {}

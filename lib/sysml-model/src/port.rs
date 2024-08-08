@@ -1,5 +1,7 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::Item;
+use crate::{OccurrenceDefinition, OccurrenceUsage, Structure};
 
-pub trait Port: Item {}
+pub trait PortDefinition: OccurrenceDefinition + Structure {}
+
+pub trait PortUsage: OccurrenceUsage {}

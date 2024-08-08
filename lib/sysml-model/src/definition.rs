@@ -8,9 +8,10 @@ pub trait Definition: Classifier {
     }
 }
 
-pub enum DefinitionElement {
+enum DefinitionElement {
     Package,
     ItemDefinition,
     PartDefinition,
     PortDefinition,
+    // TODO
 }

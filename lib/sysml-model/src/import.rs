@@ -21,4 +21,5 @@ pub enum VisibilityKind {
     #[default]
     Public,
     Private,
+    Protected,
 }

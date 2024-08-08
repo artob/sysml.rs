@@ -1,5 +1,7 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::Item;
+use crate::{ItemDefinition, ItemUsage};
 
-pub trait Part: Item {}
+pub trait PartDefinition: ItemDefinition {}
+
+pub trait PartUsage: ItemUsage {}

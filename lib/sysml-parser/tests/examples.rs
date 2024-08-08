@@ -1,16 +1,21 @@
 // This is free and unencumbered software released into the public domain.
 
-use sysml_parser::{parse_string, ParseResult};
+use sysml_parser::{grammar::package, ParseResult};
 
 #[test]
 fn parse_example_1() -> ParseResult<'static, ()> {
-    let input = r#"package MyPackage {
-        import Protolog::*;
+    let input = r#"package MySystem {
+        import Protoflow::*;
 
-        block myBlock1 : MyBlockType1;
+        block source : Random::U64;
 
-        block myBlock2 : MyBlockType2 {}
+        block delay : Delay::U64 {
+            attribute delay : Duration;
+        }
+
+        block sink : Buffer::U64;
     }"#;
-    let _ = parse_string(input)?;
+    let _system = package(input)?.1;
+    //std::eprintln!("{:?}", _system);
     Ok(())
 }

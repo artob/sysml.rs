@@ -12,7 +12,7 @@ use nom::{
     combinator::{map, map_res, recognize},
     error::ErrorKind,
     multi::many0,
-    sequence::{delimited, pair},
+    sequence::{delimited, pair, terminated},
     IResult,
 };
 use sysml_model::QualifiedName;
@@ -37,7 +37,10 @@ pub fn token(input: &str) -> IResult<&str, Token> {
 }
 
 pub fn qualified_name(input: &str) -> IResult<&str, QualifiedName> {
-    map(name, QualifiedName::from)(input)
+    let (input, mut names) = many0(terminated(name, tag("::")))(input)?;
+    let (input, name) = name(input)?;
+    names.push(name);
+    Ok((input, QualifiedName::new(names)))
 }
 
 pub fn name(input: &str) -> IResult<&str, String> {

@@ -41,7 +41,7 @@ pub fn import(input: &str) -> IResult<&str, ParsedImport> {
 }
 
 pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
-    let (input, (name, short_name, members)) = element(input, "package")?;
+    let (input, (name, short_name, _, members)) = element(input, "package")?;
 
     Ok((
         input,
@@ -54,39 +54,42 @@ pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
 }
 
 pub fn block_usage(input: &str) -> IResult<&str, ParsedBlock> {
-    let (input, (name, short_name, members)) = element(input, "block")?;
+    let (input, (name, short_name, definition, members)) = element(input, "block")?;
 
     Ok((
         input,
         ParsedBlock {
             name,
             short_name,
+            definition,
             members,
         },
     ))
 }
 
 pub fn attribute_usage(input: &str) -> IResult<&str, ParsedAttribute> {
-    let (input, (name, short_name, members)) = element(input, "attribute")?;
+    let (input, (name, short_name, definition, members)) = element(input, "attribute")?;
 
     Ok((
         input,
         ParsedAttribute {
             name,
             short_name,
+            definition,
             members,
         },
     ))
 }
 
 pub fn port_usage(input: &str) -> IResult<&str, ParsedPort> {
-    let (input, (name, short_name, members)) = element(input, "port")?;
+    let (input, (name, short_name, definition, members)) = element(input, "port")?;
 
     Ok((
         input,
         ParsedPort {
             name,
             short_name,
+            definition,
             members,
         },
     ))
@@ -95,12 +98,20 @@ pub fn port_usage(input: &str) -> IResult<&str, ParsedPort> {
 pub fn element(
     input: &str,
     tag_name: impl AsRef<str>,
-) -> IResult<&str, (Option<String>, Option<String>, Vec<ParsedMember>)> {
+) -> IResult<
+    &str,
+    (
+        Option<String>,
+        Option<String>,
+        Option<QualifiedName>,
+        Vec<ParsedMember>,
+    ),
+> {
     let (input, _) = tag(tag_name.as_ref())(input)?;
     let (input, _) = multispace1(input)?;
     let (input, (name, short_name)) = identification(input)?;
     let (input, _) = multispace0(input)?;
-    let (input, _) = opt(delimited(
+    let (input, definition) = opt(delimited(
         terminated(char(':'), multispace0),
         qualified_name,
         multispace0,
@@ -114,7 +125,7 @@ pub fn element(
         ),
     ))(input)?;
 
-    Ok((input, (name, short_name, members)))
+    Ok((input, (name, short_name, definition, members)))
 }
 
 pub fn identification(input: &str) -> IResult<&str, (Option<String>, Option<String>)> {

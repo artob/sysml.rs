@@ -3,7 +3,8 @@
 use crate::ParsedMember;
 use sysml_model::{
     prelude::{String, Vec},
-    BlockUsage, Element, Feature, ItemUsage, Namespace, OccurrenceUsage, PartUsage, Type, Usage,
+    BlockUsage, Element, Feature, ItemUsage, Namespace, OccurrenceUsage, PartUsage, QualifiedName,
+    Type, Usage,
 };
 
 #[doc(hidden)]
@@ -11,6 +12,7 @@ use sysml_model::{
 pub struct ParsedBlock {
     pub name: Option<String>,
     pub short_name: Option<String>,
+    pub definition: Option<QualifiedName>,
     pub members: Vec<ParsedMember>,
 }
 

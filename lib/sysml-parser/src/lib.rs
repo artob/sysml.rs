@@ -19,6 +19,11 @@ pub mod grammar;
 mod import;
 pub use import::*;
 
+pub mod keyword;
+pub use keyword::*;
+
+pub mod lexer;
+
 mod member;
 pub use member::*;
 

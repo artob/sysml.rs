@@ -1,7 +1,6 @@
 // This is free and unencumbered software released into the public domain.
 
-use sysml_model::{prelude::*, *};
-use sysml_parser::{parse_string, ParseResult, ParsedBlock, ParsedMember, ParsedPackage};
+use sysml_parser::{parse_string, ParseResult};
 
 #[test]
 fn parse_example_1() -> ParseResult<'static, ()> {

@@ -5,7 +5,7 @@ use sysml_model::{prelude::{Rc, String, ToString, Vec}, Element, Namespace, Pack
 
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedPackage {
-    pub(crate) name: String,
+    pub(crate) name: Option<String>,
     pub(crate) short_name: Option<String>,
     pub(crate) members: Vec<ParsedMember>,
 }
@@ -16,7 +16,7 @@ impl ParsedPackage {
     }
 
     pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Rc<Self> {
-        Rc::new(Self { name: name.to_string(), short_name: None, members })
+        Rc::new(Self { name: Some(name.to_string()), short_name: None, members })
     }
 
     pub fn members(&self) -> &Vec<ParsedMember> {
@@ -33,7 +33,7 @@ impl Namespace for ParsedPackage {}
 
 impl Element for ParsedPackage {
     fn name(&self) -> Option<&str> {
-        Some(&self.name)
+        self.name.as_deref()
     }
 
     fn short_name(&self) -> Option<&str> {
@@ -48,6 +48,6 @@ mod tests {
 
     #[test]
     fn create_package() {
-        assert_eq!(ParsedPackage::new("MyPackage").name, "MyPackage");
+        assert_eq!(ParsedPackage::new("MyPackage").name, Some("MyPackage".to_string()));
     }
 }

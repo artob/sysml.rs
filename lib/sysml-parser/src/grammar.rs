@@ -1,41 +1,41 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::{prelude::{Rc, String, Vec}, ParsedBlock, ParsedImport, ParsedMember, ParsedPackage};
+use crate::{prelude::{String, Vec}, ParsedBlock, ParsedImport, ParsedMember, ParsedPackage};
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_while},
+    bytes::complete::{is_not, tag, take_while},
     character::complete::{alpha1, alphanumeric1, char, multispace0, multispace1},
-    combinator::{map, recognize},
+    combinator::{map, opt, recognize},
     multi::many0,
     sequence::{delimited, pair, preceded, terminated},
     IResult
 };
-use sysml_model::{Package, QualifiedName};
+use sysml_model::QualifiedName;
 
-pub fn package(input: &str) -> IResult<&str, Rc<dyn Package>> {
-    let (input, (name, members)) = element(input, "package")?;
+pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
+    let (input, (name, short_name, members)) = element(input, "package")?;
 
-    Ok((input, Rc::new(ParsedPackage {
-        name: String::from(name),
-        short_name: None, // TODO
+    Ok((input, ParsedPackage {
+        name: name.map(String::from),
+        short_name: short_name.map(String::from),
         members,
-    })))
+    }))
 }
 
 pub fn block(input: &str) -> IResult<&str, ParsedMember> {
-    let (input, (name, members)) = element(input, "block")?;
+    let (input, (name, short_name, members)) = element(input, "block")?;
 
     Ok((input, ParsedMember::Block(ParsedBlock {
-        name,
-        short_name: None, // TODO
+        name: name.map(String::from),
+        short_name: short_name.map(String::from),
         members,
     })))
 }
 
-pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (String, Vec<ParsedMember>)> {
+pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (Option<&str>, Option<&str>, Vec<ParsedMember>)> {
     let (input, _) = tag(tag_name.as_ref())(input)?;
     let (input, _) = multispace1(input)?;
-    let (input, name) = identifier(input)?;
+    let (input, (name, short_name)) = identification(input)?;
     let (input, _) = multispace0(input)?;
     let (input, members) = alt((
         map(char(';'), |_| Vec::new()),
@@ -45,7 +45,7 @@ pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (String,
             preceded(multispace0, char('}'))),
     ))(input)?;
 
-    Ok((input, (String::from(name), members)))
+    Ok((input, (name, short_name, members)))
 }
 
 fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
@@ -68,13 +68,29 @@ fn import(input: &str) -> IResult<&str, ParsedMember> {
     Ok((input, ParsedMember::Import(ParsedImport::new(name))))
 }
 
-pub fn identifier(input: &str) -> IResult<&str, &str> {
+pub fn identification(input: &str) -> IResult<&str, (Option<&str>, Option<&str>)> {
+    let (input, short_name) = opt(delimited(char('<'), name, char('>')))(input)?;
+    let (input, _) = multispace0(input)?;
+    let (input, name) = opt(name)(input)?;
+
+    Ok((input, (name, short_name)))
+}
+
+pub fn name(input: &str) -> IResult<&str, &str> {
+    alt((basic_name, unrestricted_name))(input)
+}
+
+pub fn basic_name(input: &str) -> IResult<&str, &str> {
     recognize(
         pair(
             alt((alpha1, tag("_"))),
             many0(alt((alphanumeric1, tag("_"))))
         )
     )(input)
+}
+
+pub fn unrestricted_name(input: &str) -> IResult<&str, &str> {
+    delimited(char('\''), is_not("'"), char('\''))(input)
 }
 
 #[cfg(test)]

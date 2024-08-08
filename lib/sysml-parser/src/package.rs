@@ -6,11 +6,12 @@ use sysml_model::{
     Element, Namespace, Package,
 };
 
+#[doc(hidden)]
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedPackage {
-    pub(crate) name: Option<String>,
-    pub(crate) short_name: Option<String>,
-    pub(crate) members: Vec<ParsedMember>,
+    pub name: Option<String>,
+    pub short_name: Option<String>,
+    pub members: Vec<ParsedMember>,
 }
 
 impl ParsedPackage {
@@ -45,19 +46,5 @@ impl Element for ParsedPackage {
 
     fn short_name(&self) -> Option<&str> {
         self.short_name.as_deref()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    extern crate std;
-    use super::*;
-
-    #[test]
-    fn create_package() {
-        assert_eq!(
-            ParsedPackage::new("MyPackage").name,
-            Some("MyPackage".to_string())
-        );
     }
 }

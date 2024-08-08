@@ -3,27 +3,24 @@
 use crate::ParsedMember;
 use sysml_model::{
     prelude::{String, Vec},
-    BlockUsage, Element, Feature, ItemUsage, Namespace, OccurrenceUsage, PartUsage, Type, Usage,
+    AttributeUsage, Element, Feature, Namespace, Type, Usage,
 };
 
 #[doc(hidden)]
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct ParsedBlock {
+pub struct ParsedAttribute {
     pub name: Option<String>,
     pub short_name: Option<String>,
     pub members: Vec<ParsedMember>,
 }
 
-impl BlockUsage for ParsedBlock {}
-impl PartUsage for ParsedBlock {}
-impl ItemUsage for ParsedBlock {}
-impl OccurrenceUsage for ParsedBlock {}
-impl Usage for ParsedBlock {}
-impl Feature for ParsedBlock {}
-impl Type for ParsedBlock {}
-impl Namespace for ParsedBlock {}
+impl AttributeUsage for ParsedAttribute {}
+impl Usage for ParsedAttribute {}
+impl Feature for ParsedAttribute {}
+impl Type for ParsedAttribute {}
+impl Namespace for ParsedAttribute {}
 
-impl Element for ParsedBlock {
+impl Element for ParsedAttribute {
     fn name(&self) -> Option<&str> {
         self.name.as_deref()
     }

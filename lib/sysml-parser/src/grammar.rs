@@ -3,7 +3,7 @@
 use super::lexer::*;
 use crate::{
     prelude::{String, Vec},
-    ParsedBlock, ParsedImport, ParsedMember, ParsedPackage,
+    ParsedAttribute, ParsedBlock, ParsedImport, ParsedMember, ParsedPackage, ParsedPort,
 };
 use nom::{
     branch::alt,
@@ -15,6 +15,30 @@ use nom::{
     IResult,
 };
 use sysml_model::QualifiedName;
+
+pub fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
+    let (input, members) = many0(alt((
+        terminated(map(import, ParsedMember::Import), multispace0),
+        terminated(map(package, ParsedMember::Package), multispace0),
+        terminated(map(block_usage, ParsedMember::BlockUsage), multispace0),
+        terminated(
+            map(attribute_usage, ParsedMember::AttributeUsage),
+            multispace0,
+        ),
+        terminated(map(port_usage, ParsedMember::PortUsage), multispace0),
+    )))(input)?;
+
+    Ok((input, members))
+}
+
+pub fn import(input: &str) -> IResult<&str, ParsedImport> {
+    let (input, _) = tag("import")(input)?;
+    let (input, _) = multispace1(input)?;
+    let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
+    let (input, _) = char(';')(input)?;
+
+    Ok((input, ParsedImport::new(name)))
+}
 
 pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
     let (input, (name, short_name, members)) = element(input, "package")?;
@@ -29,34 +53,42 @@ pub fn package(input: &str) -> IResult<&str, ParsedPackage> {
     ))
 }
 
-pub fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
-    let (input, members) = many0(alt((
-        terminated(import, multispace0),
-        terminated(block_usage, multispace0),
-    )))(input)?;
-
-    Ok((input, members))
-}
-
-pub fn import(input: &str) -> IResult<&str, ParsedMember> {
-    let (input, _) = tag("import")(input)?;
-    let (input, _) = multispace1(input)?;
-    let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
-    let (input, _) = char(';')(input)?;
-
-    Ok((input, ParsedMember::Import(ParsedImport::new(name))))
-}
-
-pub fn block_usage(input: &str) -> IResult<&str, ParsedMember> {
+pub fn block_usage(input: &str) -> IResult<&str, ParsedBlock> {
     let (input, (name, short_name, members)) = element(input, "block")?;
 
     Ok((
         input,
-        ParsedMember::BlockUsage(ParsedBlock {
+        ParsedBlock {
             name,
             short_name,
             members,
-        }),
+        },
+    ))
+}
+
+pub fn attribute_usage(input: &str) -> IResult<&str, ParsedAttribute> {
+    let (input, (name, short_name, members)) = element(input, "attribute")?;
+
+    Ok((
+        input,
+        ParsedAttribute {
+            name,
+            short_name,
+            members,
+        },
+    ))
+}
+
+pub fn port_usage(input: &str) -> IResult<&str, ParsedPort> {
+    let (input, (name, short_name, members)) = element(input, "port")?;
+
+    Ok((
+        input,
+        ParsedPort {
+            name,
+            short_name,
+            members,
+        },
     ))
 }
 

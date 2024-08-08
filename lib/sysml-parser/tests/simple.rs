@@ -25,7 +25,10 @@ fn parse_block_empty() -> ParseResult<'static, ()> {
     let input = r#"package MyPackage { block MyBlock {} }"#;
     let reference: Rc<dyn Package> = ParsedPackage::with_members(
         "MyPackage",
-        vec![ParsedMember::BlockUsage(ParsedBlock::new("MyBlock"))],
+        vec![ParsedMember::BlockUsage(ParsedBlock {
+            name: Some("MyBlock".to_string()),
+            ..Default::default()
+        })],
     );
     assert_eq!(parse_string(input)?.to_string(), reference.to_string());
     Ok(())

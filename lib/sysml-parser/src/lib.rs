@@ -8,6 +8,9 @@
 
 #![no_std]
 
+mod attribute;
+pub use attribute::*;
+
 mod block;
 pub use block::*;
 
@@ -32,6 +35,9 @@ pub use package::*;
 
 pub mod parser;
 pub use parser::parse_string;
+
+mod port;
+pub use port::*;
 
 #[allow(unused)]
 #[doc(hidden)]

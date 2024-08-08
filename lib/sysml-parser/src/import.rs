@@ -2,9 +2,10 @@
 
 use sysml_model::{Element, Import, QualifiedName, Relationship};
 
+#[doc(hidden)]
 #[derive(Clone, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ParsedImport {
-    pub(crate) qualified_name: QualifiedName,
+    pub qualified_name: QualifiedName,
 }
 
 impl ParsedImport {

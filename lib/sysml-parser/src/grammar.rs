@@ -13,16 +13,7 @@ use nom::{
 use sysml_model::{Package, QualifiedName};
 
 pub fn package(input: &str) -> IResult<&str, Rc<dyn Package>> {
-    let (input, _) = tag("package")(input)?;
-    let (input, _) = multispace1(input)?;
-    let (input, name) = identifier(input)?;
-    let (input, _) = multispace0(input)?;
-    let (input, members) = delimited(
-        char('{'),
-        preceded(multispace0, members),
-        preceded(multispace0, char('}'))
-    )(input)?;
-    let (input, _) = multispace0(input)?;
+    let (input, (name, members)) = element(input, "package")?;
 
     Ok((input, Rc::new(ParsedPackage {
         name: String::from(name),
@@ -32,21 +23,29 @@ pub fn package(input: &str) -> IResult<&str, Rc<dyn Package>> {
 }
 
 pub fn block(input: &str) -> IResult<&str, ParsedMember> {
-    let (input, _) = tag("block")(input)?;
-    let (input, _) = multispace1(input)?;
-    let (input, name) = identifier(input)?;
-    let (input, _) = multispace0(input)?;
-    let (input, members) = delimited(
-        char('{'),
-        preceded(multispace0, members),
-        preceded(multispace0, char('}'))
-    )(input)?;
+    let (input, (name, members)) = element(input, "block")?;
 
     Ok((input, ParsedMember::Block(ParsedBlock {
-        name: String::from(name),
+        name,
         short_name: None, // TODO
         members,
     })))
+}
+
+pub fn element(input: &str, tag_name: impl AsRef<str>) -> IResult<&str, (String, Vec<ParsedMember>)> {
+    let (input, _) = tag(tag_name.as_ref())(input)?;
+    let (input, _) = multispace1(input)?;
+    let (input, name) = identifier(input)?;
+    let (input, _) = multispace0(input)?;
+    let (input, members) = alt((
+        map(char(';'), |_| Vec::new()),
+        delimited(
+            char('{'),
+            preceded(multispace0, members),
+            preceded(multispace0, char('}'))),
+    ))(input)?;
+
+    Ok((input, (String::from(name), members)))
 }
 
 fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {

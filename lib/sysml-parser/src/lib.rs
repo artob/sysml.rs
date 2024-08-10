@@ -8,37 +8,37 @@
 
 #![no_std]
 
-mod attribute;
-pub use attribute::*;
-
-mod block;
-pub use block::*;
+#[allow(unused)]
+#[doc(hidden)]
+use sysml_model::prelude;
 
 mod error;
 pub use error::*;
 
 pub mod grammar;
 
-mod import;
-pub use import::*;
-
 pub mod keyword;
 pub use keyword::*;
 
 pub mod lexer;
 
-mod member;
-pub use member::*;
+mod parsed_attribute;
+pub use parsed_attribute::*;
 
-mod package;
-pub use package::*;
+mod parsed_block;
+pub use parsed_block::*;
+
+mod parsed_import;
+pub use parsed_import::*;
+
+mod parsed_member;
+pub use parsed_member::*;
+
+mod parsed_package;
+pub use parsed_package::*;
+
+mod parsed_port;
+pub use parsed_port::*;
 
 pub mod parser;
 pub use parser::parse_string;
-
-mod port;
-pub use port::*;
-
-#[allow(unused)]
-#[doc(hidden)]
-use sysml_model::prelude;

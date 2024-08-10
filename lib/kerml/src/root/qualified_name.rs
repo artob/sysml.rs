@@ -10,8 +10,36 @@ impl QualifiedName {
         Self(names)
     }
 
+    pub fn to_string(&self) -> String {
+        self.0.join("::")
+    }
+
     pub fn to_vec(&self) -> Vec<String> {
         self.0.clone()
+    }
+
+    pub fn to_tuple2(&self) -> (Option<&str>, Option<&str>) {
+        (self.first(), self.second())
+    }
+
+    pub fn to_tuple3(&self) -> (Option<&str>, Option<&str>, Option<&str>) {
+        (self.first(), self.second(), self.third())
+    }
+
+    pub fn first(&self) -> Option<&str> {
+        self.0.first().map(String::as_str)
+    }
+
+    pub fn second(&self) -> Option<&str> {
+        self.0.get(1).map(String::as_str)
+    }
+
+    pub fn third(&self) -> Option<&str> {
+        self.0.get(2).map(String::as_str)
+    }
+
+    pub fn last(&self) -> Option<&str> {
+        self.0.last().map(String::as_str)
     }
 }
 
@@ -35,6 +63,6 @@ impl From<&str> for QualifiedName {
 
 impl fmt::Display for QualifiedName {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0.join("::"))
+        write!(f, "{}", self.to_string())
     }
 }

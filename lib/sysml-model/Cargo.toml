@@ -19,4 +19,4 @@ default = ["std"]
 std = []
 
 [dependencies]
-kerml = "0.1.0"
+kerml = "0.1.1"

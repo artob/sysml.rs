@@ -10,7 +10,7 @@ use nom::{
     bytes::complete::{is_not, tag, take_while1},
     character::complete::{alpha1, alphanumeric1, char, multispace0},
     combinator::{map, map_res, recognize},
-    error::ErrorKind,
+    error::{context, ErrorKind},
     multi::many0,
     sequence::{delimited, pair, terminated},
     IResult,
@@ -25,47 +25,60 @@ pub enum Token {
 }
 
 pub fn tokens(input: &str) -> IResult<&str, Vec<Token>> {
-    many0(delimited(multispace0, token, multispace0))(input)
+    context("tokens", many0(delimited(multispace0, token, multispace0)))(input)
 }
 
 pub fn token(input: &str) -> IResult<&str, Token> {
-    alt((
-        map(reserved_keyword, Token::Keyword),
-        map(name, Token::Name),
-        map(qualified_name, Token::QualifiedName),
-    ))(input)
+    context(
+        "token",
+        alt((
+            map(reserved_keyword, Token::Keyword),
+            map(name, Token::Name),
+            map(qualified_name, Token::QualifiedName),
+        )),
+    )(input)
 }
 
 pub fn qualified_name(input: &str) -> IResult<&str, QualifiedName> {
     let (input, mut names) = many0(terminated(name, tag("::")))(input)?;
     let (input, name) = name(input)?;
     names.push(name);
+
     Ok((input, QualifiedName::new(names)))
 }
 
 pub fn name(input: &str) -> IResult<&str, String> {
-    alt((basic_name, unrestricted_name))(input)
+    context("name", alt((basic_name, unrestricted_name)))(input)
 }
 
 pub fn basic_name(input: &str) -> IResult<&str, String> {
-    let (input, name) = recognize(pair(
-        alt((alpha1, tag("_"))),
-        many0(alt((alphanumeric1, tag("_")))),
-    ))(input)?;
+    let (input, name) = context(
+        "basic_name",
+        recognize(pair(
+            alt((alpha1, tag("_"))),
+            many0(alt((alphanumeric1, tag("_")))),
+        )),
+    )(input)?;
 
     Ok((input, String::from(name)))
 }
 
 pub fn unrestricted_name(input: &str) -> IResult<&str, String> {
-    let (input, name) = delimited(char('\''), is_not("'"), char('\''))(input)?;
+    let (input, name) = context(
+        "unrestricted_name",
+        delimited(char('\''), is_not("'"), char('\'')),
+    )(input)?;
 
     Ok((input, String::from(name)))
 }
 
 pub fn reserved_keyword(input: &str) -> IResult<&str, Keyword> {
-    map_res(take_while1(|c: char| c.is_ascii_lowercase()), |s: &str| {
-        Keyword::try_from(s).or_else(|_| Err(Error::new(input, ErrorKind::Tag)))
-    })(input)
+    context(
+        "reserved_keyword",
+        map_res(take_while1(|c: char| c.is_ascii_lowercase()), |s: &str| {
+            Keyword::try_from(s).or_else(|_| Err(Error::new(input, ErrorKind::Tag)))
+        }),
+    )(input)
 }
 
 #[cfg(test)]

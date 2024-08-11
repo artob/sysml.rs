@@ -10,6 +10,7 @@ use nom::{
     bytes::complete::{tag, take_while},
     character::complete::{char, multispace0, multispace1},
     combinator::{map, opt},
+    error::context,
     multi::many0,
     sequence::{delimited, preceded, terminated},
     IResult,
@@ -17,16 +18,19 @@ use nom::{
 use sysml_model::QualifiedName;
 
 pub fn members(input: &str) -> IResult<&str, Vec<ParsedMember>> {
-    let (input, members) = many0(alt((
-        terminated(map(import, ParsedMember::Import), multispace0),
-        terminated(map(package, ParsedMember::Package), multispace0),
-        terminated(map(block_usage, ParsedMember::BlockUsage), multispace0),
-        terminated(
-            map(attribute_usage, ParsedMember::AttributeUsage),
-            multispace0,
-        ),
-        terminated(map(port_usage, ParsedMember::PortUsage), multispace0),
-    )))(input)?;
+    let (input, members) = context(
+        "tokens",
+        many0(alt((
+            terminated(map(import, ParsedMember::Import), multispace0),
+            terminated(map(package, ParsedMember::Package), multispace0),
+            terminated(map(block_usage, ParsedMember::BlockUsage), multispace0),
+            terminated(
+                map(attribute_usage, ParsedMember::AttributeUsage),
+                multispace0,
+            ),
+            terminated(map(port_usage, ParsedMember::PortUsage), multispace0),
+        ))),
+    )(input)?;
 
     Ok((input, members))
 }
@@ -95,11 +99,11 @@ pub fn port_usage(input: &str) -> IResult<&str, ParsedPort> {
     ))
 }
 
-pub fn element(
-    input: &str,
-    tag_name: impl AsRef<str>,
+pub fn element<'a>(
+    input: &'a str,
+    tag_name: &'static str,
 ) -> IResult<
-    &str,
+    &'a str,
     (
         Option<String>,
         Option<String>,
@@ -107,7 +111,7 @@ pub fn element(
         Vec<ParsedMember>,
     ),
 > {
-    let (input, _) = tag(tag_name.as_ref())(input)?;
+    let (input, _) = context(tag_name, tag(tag_name))(input)?;
     let (input, _) = multispace1(input)?;
     let (input, (name, short_name)) = identification(input)?;
     let (input, _) = multispace0(input)?;

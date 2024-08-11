@@ -22,4 +22,4 @@ tracing = ["dep:tracing"]
 [dependencies]
 sysml-model = "0.1.1"
 tracing = { version = "0.1", optional = true, default-features = false }
-nom = { version = "7", default-features = false }
+nom = { version = "7", default-features = false, features = ["alloc"] }

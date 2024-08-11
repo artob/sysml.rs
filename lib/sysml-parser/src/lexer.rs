@@ -3,7 +3,7 @@
 use super::Keyword;
 use crate::{
     prelude::{String, Vec},
-    Error,
+    ParseError, ParseResult,
 };
 use nom::{
     branch::alt,
@@ -13,7 +13,6 @@ use nom::{
     error::{context, ErrorKind},
     multi::many0,
     sequence::{delimited, pair, terminated},
-    IResult,
 };
 use sysml_model::QualifiedName;
 
@@ -24,11 +23,11 @@ pub enum Token {
     QualifiedName(QualifiedName),
 }
 
-pub fn tokens(input: &str) -> IResult<&str, Vec<Token>> {
+pub fn tokens(input: &str) -> ParseResult<(&str, Vec<Token>)> {
     context("tokens", many0(delimited(multispace0, token, multispace0)))(input)
 }
 
-pub fn token(input: &str) -> IResult<&str, Token> {
+pub fn token(input: &str) -> ParseResult<(&str, Token)> {
     context(
         "token",
         alt((
@@ -39,7 +38,7 @@ pub fn token(input: &str) -> IResult<&str, Token> {
     )(input)
 }
 
-pub fn qualified_name(input: &str) -> IResult<&str, QualifiedName> {
+pub fn qualified_name(input: &str) -> ParseResult<(&str, QualifiedName)> {
     let (input, mut names) = many0(terminated(name, tag("::")))(input)?;
     let (input, name) = name(input)?;
     names.push(name);
@@ -47,11 +46,11 @@ pub fn qualified_name(input: &str) -> IResult<&str, QualifiedName> {
     Ok((input, QualifiedName::new(names)))
 }
 
-pub fn name(input: &str) -> IResult<&str, String> {
+pub fn name(input: &str) -> ParseResult<(&str, String)> {
     context("name", alt((basic_name, unrestricted_name)))(input)
 }
 
-pub fn basic_name(input: &str) -> IResult<&str, String> {
+pub fn basic_name(input: &str) -> ParseResult<(&str, String)> {
     let (input, name) = context(
         "basic_name",
         recognize(pair(
@@ -63,7 +62,7 @@ pub fn basic_name(input: &str) -> IResult<&str, String> {
     Ok((input, String::from(name)))
 }
 
-pub fn unrestricted_name(input: &str) -> IResult<&str, String> {
+pub fn unrestricted_name(input: &str) -> ParseResult<(&str, String)> {
     let (input, name) = context(
         "unrestricted_name",
         delimited(char('\''), is_not("'"), char('\'')),
@@ -72,11 +71,13 @@ pub fn unrestricted_name(input: &str) -> IResult<&str, String> {
     Ok((input, String::from(name)))
 }
 
-pub fn reserved_keyword(input: &str) -> IResult<&str, Keyword> {
+pub fn reserved_keyword(input: &str) -> ParseResult<(&str, Keyword)> {
+    use nom::error::ParseError as _; // for from_error_kind
     context(
         "reserved_keyword",
         map_res(take_while1(|c: char| c.is_ascii_lowercase()), |s: &str| {
-            Keyword::try_from(s).or_else(|_| Err(Error::new(input, ErrorKind::Tag)))
+            Keyword::try_from(s)
+                .or_else(|_| Err(ParseError::from_error_kind(input, ErrorKind::Tag)))
         }),
     )(input)
 }

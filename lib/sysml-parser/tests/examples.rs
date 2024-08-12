@@ -15,7 +15,7 @@ fn parse_example_1() -> ParseResult<'static, ()> {
 
         block sink : Buffer::U64;
     }"#;
-    let _system = package(input)?.1;
+    let _system = package(input.into())?.1;
     //std::eprintln!("{:?}", _system);
     Ok(())
 }

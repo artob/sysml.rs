@@ -16,10 +16,12 @@ publish.workspace = true
 
 [features]
 default = ["std", "tracing"]
-std = ["nom/std", "sysml-model/std", "tracing?/std"]
+std = ["nom/std", "nom_locate/std", "sysml-model/std", "tracing?/std"]
 tracing = ["dep:tracing"]
 
 [dependencies]
+#error-stack = { version = "0.5.0", default-features = false }
+nom = { version = "7", default-features = false, features = ["alloc"] }
+nom_locate = { version = "4.2", default-features = false, features = ["alloc"] }
 sysml-model = "0.1.2"
 tracing = { version = "0.1", optional = true, default-features = false }
-nom = { version = "7", default-features = false, features = ["alloc"] }

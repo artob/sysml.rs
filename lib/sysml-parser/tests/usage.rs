@@ -7,6 +7,6 @@ fn parse_block_usage() -> ParseResult<'static, ()> {
     let input = r#"package MyPackage {
         block MyBlock : MyBlockType;
     }"#;
-    let (_, _package) = package(input)?;
+    let (_, _package) = package(input.into())?;
     Ok(())
 }

@@ -7,6 +7,7 @@
 //! ```
 
 #![no_std]
+#![deny(unsafe_code)]
 
 #[allow(unused)]
 #[doc(hidden)]
@@ -41,4 +42,4 @@ mod parsed_port;
 pub use parsed_port::*;
 
 pub mod parser;
-pub use parser::parse_string;
+pub use parser::*;

@@ -17,7 +17,7 @@ use nom::{
 };
 use sysml_model::QualifiedName;
 
-pub fn members(input: &str) -> ParseResult<(&str, Vec<ParsedMember>)> {
+pub fn members(input: Span) -> ParseResult<(Span, Vec<ParsedMember>)> {
     let (input, members) = context(
         "tokens",
         many0(alt((
@@ -35,16 +35,19 @@ pub fn members(input: &str) -> ParseResult<(&str, Vec<ParsedMember>)> {
     Ok((input, members))
 }
 
-pub fn import(input: &str) -> ParseResult<(&str, ParsedImport)> {
+pub fn import(input: Span) -> ParseResult<(Span, ParsedImport)> {
+    use nom::AsChar;
     let (input, _) = tag("import")(input)?;
     let (input, _) = multispace1(input)?;
-    let (input, name) = map(take_while(|c| c != ';'), QualifiedName::from)(input)?;
+    let (input, name) = map(take_while(|c| AsChar::as_char(c) != ';'), |span: Span| {
+        QualifiedName::from(*span.fragment())
+    })(input)?;
     let (input, _) = char(';')(input)?;
 
     Ok((input, ParsedImport::new(name)))
 }
 
-pub fn package(input: &str) -> ParseResult<(&str, ParsedPackage)> {
+pub fn package(input: Span) -> ParseResult<(Span, ParsedPackage)> {
     let (input, (name, short_name, _, members)) = element(input, "package")?;
 
     Ok((
@@ -57,7 +60,7 @@ pub fn package(input: &str) -> ParseResult<(&str, ParsedPackage)> {
     ))
 }
 
-pub fn block_usage(input: &str) -> ParseResult<(&str, ParsedBlock)> {
+pub fn block_usage(input: Span) -> ParseResult<(Span, ParsedBlock)> {
     let (input, (name, short_name, definition, members)) = element(input, "block")?;
 
     Ok((
@@ -71,7 +74,7 @@ pub fn block_usage(input: &str) -> ParseResult<(&str, ParsedBlock)> {
     ))
 }
 
-pub fn attribute_usage(input: &str) -> ParseResult<(&str, ParsedAttribute)> {
+pub fn attribute_usage(input: Span) -> ParseResult<(Span, ParsedAttribute)> {
     let (input, (name, short_name, definition, members)) = element(input, "attribute")?;
 
     Ok((
@@ -85,7 +88,7 @@ pub fn attribute_usage(input: &str) -> ParseResult<(&str, ParsedAttribute)> {
     ))
 }
 
-pub fn port_usage(input: &str) -> ParseResult<(&str, ParsedPort)> {
+pub fn port_usage(input: Span) -> ParseResult<(Span, ParsedPort)> {
     let (input, (name, short_name, definition, members)) = element(input, "port")?;
 
     Ok((
@@ -100,12 +103,12 @@ pub fn port_usage(input: &str) -> ParseResult<(&str, ParsedPort)> {
 }
 
 pub fn element<'a>(
-    input: &'a str,
+    input: Span<'a>,
     tag_name: &'static str,
 ) -> ParseResult<
     'a,
     (
-        &'a str,
+        Span<'a>,
         (
             Option<String>,
             Option<String>,
@@ -135,7 +138,7 @@ pub fn element<'a>(
     Ok((input, (name, short_name, definition, members)))
 }
 
-pub fn identification(input: &str) -> ParseResult<(&str, (Option<String>, Option<String>))> {
+pub fn identification(input: Span) -> ParseResult<(Span, (Option<String>, Option<String>))> {
     let (input, short_name) = opt(delimited(char('<'), name, char('>')))(input)?;
     let (input, _) = multispace0(input)?;
     let (input, name) = opt(name)(input)?;

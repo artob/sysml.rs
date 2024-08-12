@@ -1,5 +1,7 @@
 // This is free and unencumbered software released into the public domain.
 
+use crate::lexer::Span;
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd)]
 pub enum Keyword {
     About,
@@ -123,6 +125,14 @@ pub enum Keyword {
     When,
     While,
     Xor,
+}
+
+impl<'a> TryFrom<Span<'a>> for Keyword {
+    type Error = ();
+
+    fn try_from(input: Span) -> Result<Self, Self::Error> {
+        Self::try_from(*input.fragment())
+    }
 }
 
 impl TryFrom<&str> for Keyword {

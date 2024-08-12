@@ -14,7 +14,10 @@ use nom::{
     multi::many0,
     sequence::{delimited, pair, terminated},
 };
+use nom_locate::LocatedSpan;
 use sysml_model::QualifiedName;
+
+pub type Span<'a> = LocatedSpan<&'a str>;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, PartialOrd)]
 pub enum Token {
@@ -23,11 +26,11 @@ pub enum Token {
     QualifiedName(QualifiedName),
 }
 
-pub fn tokens(input: &str) -> ParseResult<(&str, Vec<Token>)> {
+pub fn tokens(input: Span) -> ParseResult<(Span, Vec<Token>)> {
     context("tokens", many0(delimited(multispace0, token, multispace0)))(input)
 }
 
-pub fn token(input: &str) -> ParseResult<(&str, Token)> {
+pub fn token(input: Span) -> ParseResult<(Span, Token)> {
     context(
         "token",
         alt((
@@ -38,7 +41,7 @@ pub fn token(input: &str) -> ParseResult<(&str, Token)> {
     )(input)
 }
 
-pub fn qualified_name(input: &str) -> ParseResult<(&str, QualifiedName)> {
+pub fn qualified_name(input: Span) -> ParseResult<(Span, QualifiedName)> {
     let (input, mut names) = many0(terminated(name, tag("::")))(input)?;
     let (input, name) = name(input)?;
     names.push(name);
@@ -46,11 +49,11 @@ pub fn qualified_name(input: &str) -> ParseResult<(&str, QualifiedName)> {
     Ok((input, QualifiedName::new(names)))
 }
 
-pub fn name(input: &str) -> ParseResult<(&str, String)> {
+pub fn name(input: Span) -> ParseResult<(Span, String)> {
     context("name", alt((basic_name, unrestricted_name)))(input)
 }
 
-pub fn basic_name(input: &str) -> ParseResult<(&str, String)> {
+pub fn basic_name(input: Span) -> ParseResult<(Span, String)> {
     let (input, name) = context(
         "basic_name",
         recognize(pair(
@@ -59,26 +62,30 @@ pub fn basic_name(input: &str) -> ParseResult<(&str, String)> {
         )),
     )(input)?;
 
-    Ok((input, String::from(name)))
+    Ok((input, String::from(*name.fragment())))
 }
 
-pub fn unrestricted_name(input: &str) -> ParseResult<(&str, String)> {
+pub fn unrestricted_name(input: Span) -> ParseResult<(Span, String)> {
     let (input, name) = context(
         "unrestricted_name",
         delimited(char('\''), is_not("'"), char('\'')),
     )(input)?;
 
-    Ok((input, String::from(name)))
+    Ok((input, String::from(*name.fragment())))
 }
 
-pub fn reserved_keyword(input: &str) -> ParseResult<(&str, Keyword)> {
+pub fn reserved_keyword(input: Span) -> ParseResult<(Span, Keyword)> {
     use nom::error::ParseError as _; // for from_error_kind
+    use nom::AsChar;
     context(
         "reserved_keyword",
-        map_res(take_while1(|c: char| c.is_ascii_lowercase()), |s: &str| {
-            Keyword::try_from(s)
-                .or_else(|_| Err(ParseError::from_error_kind(input, ErrorKind::Tag)))
-        }),
+        map_res(
+            take_while1(|c| AsChar::as_char(c).is_ascii_lowercase()),
+            |span: Span| {
+                Keyword::try_from(span)
+                    .or_else(|_| Err(ParseError::from_error_kind(input, ErrorKind::Tag)))
+            },
+        ),
     )(input)
 }
 
@@ -90,7 +97,7 @@ mod tests {
     fn lex_block_keyword() {
         let input = r#"block"#;
         assert_eq!(
-            token(input).map(|(_, token)| token),
+            token(input.into()).map(|(_, token)| token),
             Ok(Token::Keyword(Keyword::Block))
         );
     }
@@ -99,7 +106,7 @@ mod tests {
     fn lex_basic_name() {
         let input = r#"MyPackage"#;
         assert_eq!(
-            token(input).map(|(_, token)| token),
+            token(input.into()).map(|(_, token)| token),
             Ok(Token::Name(String::from("MyPackage")))
         );
     }
@@ -108,7 +115,7 @@ mod tests {
     fn lex_quoted_name() {
         let input = r#"'My Package'"#;
         assert_eq!(
-            token(input).map(|(_, token)| token),
+            token(input.into()).map(|(_, token)| token),
             Ok(Token::Name(String::from("My Package")))
         );
     }

@@ -13,15 +13,15 @@
 #[doc(hidden)]
 use sysml_model::prelude;
 
-mod error;
-pub use error::*;
-
 pub mod grammar;
 
 pub mod keyword;
 pub use keyword::*;
 
 pub mod lexer;
+
+mod parse_error;
+pub use parse_error::*;
 
 mod parsed_attribute;
 pub use parsed_attribute::*;
@@ -35,6 +35,9 @@ pub use parsed_import::*;
 mod parsed_member;
 pub use parsed_member::*;
 
+mod parsed_model;
+pub use parsed_model::*;
+
 mod parsed_package;
 pub use parsed_package::*;
 
@@ -43,3 +46,6 @@ pub use parsed_port::*;
 
 pub mod parser;
 pub use parser::*;
+
+mod syntax_error;
+pub use syntax_error::*;

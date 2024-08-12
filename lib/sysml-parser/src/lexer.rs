@@ -3,7 +3,7 @@
 use super::Keyword;
 use crate::{
     prelude::{String, Vec},
-    ParseError, ParseResult,
+    SyntaxError, SyntaxResult,
 };
 use nom::{
     branch::alt,
@@ -26,11 +26,11 @@ pub enum Token {
     QualifiedName(QualifiedName),
 }
 
-pub fn tokens(input: Span) -> ParseResult<(Span, Vec<Token>)> {
+pub fn tokens(input: Span) -> SyntaxResult<(Span, Vec<Token>)> {
     context("tokens", many0(delimited(multispace0, token, multispace0)))(input)
 }
 
-pub fn token(input: Span) -> ParseResult<(Span, Token)> {
+pub fn token(input: Span) -> SyntaxResult<(Span, Token)> {
     context(
         "token",
         alt((
@@ -41,7 +41,7 @@ pub fn token(input: Span) -> ParseResult<(Span, Token)> {
     )(input)
 }
 
-pub fn qualified_name(input: Span) -> ParseResult<(Span, QualifiedName)> {
+pub fn qualified_name(input: Span) -> SyntaxResult<(Span, QualifiedName)> {
     let (input, mut names) = many0(terminated(name, tag("::")))(input)?;
     let (input, name) = name(input)?;
     names.push(name);
@@ -49,11 +49,11 @@ pub fn qualified_name(input: Span) -> ParseResult<(Span, QualifiedName)> {
     Ok((input, QualifiedName::new(names)))
 }
 
-pub fn name(input: Span) -> ParseResult<(Span, String)> {
+pub fn name(input: Span) -> SyntaxResult<(Span, String)> {
     context("name", alt((basic_name, unrestricted_name)))(input)
 }
 
-pub fn basic_name(input: Span) -> ParseResult<(Span, String)> {
+pub fn basic_name(input: Span) -> SyntaxResult<(Span, String)> {
     let (input, name) = context(
         "basic_name",
         recognize(pair(
@@ -65,7 +65,7 @@ pub fn basic_name(input: Span) -> ParseResult<(Span, String)> {
     Ok((input, String::from(*name.fragment())))
 }
 
-pub fn unrestricted_name(input: Span) -> ParseResult<(Span, String)> {
+pub fn unrestricted_name(input: Span) -> SyntaxResult<(Span, String)> {
     let (input, name) = context(
         "unrestricted_name",
         delimited(char('\''), is_not("'"), char('\'')),
@@ -74,7 +74,7 @@ pub fn unrestricted_name(input: Span) -> ParseResult<(Span, String)> {
     Ok((input, String::from(*name.fragment())))
 }
 
-pub fn reserved_keyword(input: Span) -> ParseResult<(Span, Keyword)> {
+pub fn reserved_keyword(input: Span) -> SyntaxResult<(Span, Keyword)> {
     use nom::error::ParseError as _; // for from_error_kind
     use nom::AsChar;
     context(
@@ -83,7 +83,7 @@ pub fn reserved_keyword(input: Span) -> ParseResult<(Span, Keyword)> {
             take_while1(|c| AsChar::as_char(c).is_ascii_lowercase()),
             |span: Span| {
                 Keyword::try_from(span)
-                    .or_else(|_| Err(ParseError::from_error_kind(input, ErrorKind::Tag)))
+                    .or_else(|_| Err(SyntaxError::from_error_kind(input, ErrorKind::Tag)))
             },
         ),
     )(input)

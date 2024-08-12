@@ -2,7 +2,7 @@
 
 use crate::ParsedMember;
 use sysml_model::{
-    prelude::{Rc, String, ToString, Vec},
+    prelude::{String, ToString, Vec},
     Element, Namespace, Package,
 };
 
@@ -15,16 +15,16 @@ pub struct ParsedPackage {
 }
 
 impl ParsedPackage {
-    pub fn new(name: impl ToString) -> Rc<Self> {
+    pub fn new(name: impl ToString) -> Self {
         Self::with_members(name, Vec::new())
     }
 
-    pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Rc<Self> {
-        Rc::new(Self {
+    pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Self {
+        Self {
             name: Some(name.to_string()),
             short_name: None,
             members,
-        })
+        }
     }
 
     pub fn members(&self) -> &Vec<ParsedMember> {

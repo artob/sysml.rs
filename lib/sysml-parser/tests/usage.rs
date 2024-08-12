@@ -1,9 +1,9 @@
 // This is free and unencumbered software released into the public domain.
 
-use sysml_parser::{grammar::package, ParseResult};
+use sysml_parser::{grammar::package, SyntaxResult};
 
 #[test]
-fn parse_block_usage() -> ParseResult<'static, ()> {
+fn parse_block_usage() -> SyntaxResult<'static, ()> {
     let input = r#"package MyPackage {
         block MyBlock : MyBlockType;
     }"#;

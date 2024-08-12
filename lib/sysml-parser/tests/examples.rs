@@ -1,9 +1,9 @@
 // This is free and unencumbered software released into the public domain.
 
-use sysml_parser::{grammar::package, ParseResult};
+use sysml_parser::{grammar::package, SyntaxResult};
 
 #[test]
-fn parse_example_1() -> ParseResult<'static, ()> {
+fn parse_example_1() -> SyntaxResult<'static, ()> {
     let input = r#"package MySystem {
         import Protoflow::*;
 

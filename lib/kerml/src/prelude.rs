@@ -12,6 +12,7 @@ extern crate alloc;
 use std as alloc;
 
 pub use alloc::{
+    borrow::ToOwned,
     boxed::Box,
     format,
     rc::Rc,

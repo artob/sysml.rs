@@ -128,17 +128,17 @@ pub enum Keyword {
 }
 
 impl<'a> TryFrom<Span<'a>> for Keyword {
-    type Error = ();
+    type Error = Span<'a>;
 
-    fn try_from(input: Span) -> Result<Self, Self::Error> {
-        Self::try_from(*input.fragment())
+    fn try_from(input: Span<'a>) -> Result<Self, Self::Error> {
+        Self::try_from(*input.fragment()).map_err(|_| input)
     }
 }
 
-impl TryFrom<&str> for Keyword {
-    type Error = ();
+impl<'a> TryFrom<&'a str> for Keyword {
+    type Error = &'a str;
 
-    fn try_from(input: &str) -> Result<Self, Self::Error> {
+    fn try_from(input: &'a str) -> Result<Self, Self::Error> {
         use Keyword::*;
         Ok(match input {
             "about" => About,
@@ -262,7 +262,7 @@ impl TryFrom<&str> for Keyword {
             "when" => When,
             "while" => While,
             "xor" => Xor,
-            _ => return Err(()),
+            _ => return Err(input),
         })
     }
 }

@@ -17,8 +17,9 @@ use nom::{
 };
 use sysml_model::QualifiedName;
 
-pub fn model<'a>(input: Span<'a>) -> SyntaxResult<(Span<'a>, ParsedModel)> {
-    let (input, package) = context("model", delimited(multispace0, package, multispace0))(input)?;
+pub fn model<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, ParsedModel)> {
+    let (input, package) =
+        context("model", delimited(multispace0, package, multispace0))(input.into())?;
 
     Ok((
         input,
@@ -28,7 +29,7 @@ pub fn model<'a>(input: Span<'a>) -> SyntaxResult<(Span<'a>, ParsedModel)> {
     ))
 }
 
-pub fn members(input: Span) -> SyntaxResult<(Span, Vec<ParsedMember>)> {
+pub fn members<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, Vec<ParsedMember>)> {
     let (input, members) = context(
         "tokens",
         many0(alt((
@@ -41,14 +42,14 @@ pub fn members(input: Span) -> SyntaxResult<(Span, Vec<ParsedMember>)> {
             ),
             terminated(map(port_usage, ParsedMember::PortUsage), multispace0),
         ))),
-    )(input)?;
+    )(input.into())?;
 
     Ok((input, members))
 }
 
-pub fn import(input: Span) -> SyntaxResult<(Span, ParsedImport)> {
+pub fn import<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, ParsedImport)> {
     use nom::AsChar;
-    let (input, _) = tag("import")(input)?;
+    let (input, _) = tag("import")(input.into())?;
     let (input, _) = multispace1(input)?;
     let (input, name) = map(take_while(|c| AsChar::as_char(c) != ';'), |span: Span| {
         QualifiedName::from(span.into_fragment())
@@ -58,8 +59,8 @@ pub fn import(input: Span) -> SyntaxResult<(Span, ParsedImport)> {
     Ok((input, ParsedImport::new(name)))
 }
 
-pub fn package(input: Span) -> SyntaxResult<(Span, ParsedPackage)> {
-    let (input, (name, short_name, _, members)) = element(input, "package")?;
+pub fn package<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, ParsedPackage)> {
+    let (input, (name, short_name, _, members)) = element(input.into(), "package")?;
 
     Ok((
         input,
@@ -71,8 +72,8 @@ pub fn package(input: Span) -> SyntaxResult<(Span, ParsedPackage)> {
     ))
 }
 
-pub fn block_usage(input: Span) -> SyntaxResult<(Span, ParsedBlock)> {
-    let (input, (name, short_name, definition, members)) = element(input, "block")?;
+pub fn block_usage<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, ParsedBlock)> {
+    let (input, (name, short_name, definition, members)) = element(input.into(), "block")?;
 
     Ok((
         input,
@@ -85,8 +86,10 @@ pub fn block_usage(input: Span) -> SyntaxResult<(Span, ParsedBlock)> {
     ))
 }
 
-pub fn attribute_usage(input: Span) -> SyntaxResult<(Span, ParsedAttribute)> {
-    let (input, (name, short_name, definition, members)) = element(input, "attribute")?;
+pub fn attribute_usage<'a>(
+    input: impl Into<Span<'a>>,
+) -> SyntaxResult<'a, (Span<'a>, ParsedAttribute)> {
+    let (input, (name, short_name, definition, members)) = element(input.into(), "attribute")?;
 
     Ok((
         input,
@@ -99,8 +102,8 @@ pub fn attribute_usage(input: Span) -> SyntaxResult<(Span, ParsedAttribute)> {
     ))
 }
 
-pub fn port_usage(input: Span) -> SyntaxResult<(Span, ParsedPort)> {
-    let (input, (name, short_name, definition, members)) = element(input, "port")?;
+pub fn port_usage<'a>(input: impl Into<Span<'a>>) -> SyntaxResult<'a, (Span<'a>, ParsedPort)> {
+    let (input, (name, short_name, definition, members)) = element(input.into(), "port")?;
 
     Ok((
         input,
@@ -114,7 +117,7 @@ pub fn port_usage(input: Span) -> SyntaxResult<(Span, ParsedPort)> {
 }
 
 pub fn element<'a>(
-    input: Span<'a>,
+    input: impl Into<Span<'a>>,
     tag_name: &'static str,
 ) -> SyntaxResult<
     'a,
@@ -128,7 +131,7 @@ pub fn element<'a>(
         ),
     ),
 > {
-    let (input, _) = context(tag_name, tag(tag_name))(input)?;
+    let (input, _) = context(tag_name, tag(tag_name))(input.into())?;
     let (input, _) = multispace1(input)?;
     let (input, (name, short_name)) = identification(input)?;
     let (input, _) = multispace0(input)?;
@@ -149,8 +152,10 @@ pub fn element<'a>(
     Ok((input, (name, short_name, definition, members)))
 }
 
-pub fn identification(input: Span) -> SyntaxResult<(Span, (Option<String>, Option<String>))> {
-    let (input, short_name) = opt(delimited(char('<'), name, char('>')))(input)?;
+pub fn identification<'a>(
+    input: impl Into<Span<'a>>,
+) -> SyntaxResult<'a, (Span<'a>, (Option<String>, Option<String>))> {
+    let (input, short_name) = opt(delimited(char('<'), name, char('>')))(input.into())?;
     let (input, _) = multispace0(input)?;
     let (input, name) = opt(name)(input)?;
 

@@ -15,6 +15,15 @@ pub struct ParsedAttribute {
     pub members: Vec<ParsedMember>,
 }
 
+impl From<&str> for ParsedAttribute {
+    fn from(name: &str) -> Self {
+        Self {
+            name: Some(name.into()),
+            ..Default::default()
+        }
+    }
+}
+
 impl AttributeUsage for ParsedAttribute {}
 impl Usage for ParsedAttribute {}
 impl Feature for ParsedAttribute {}

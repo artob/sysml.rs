@@ -15,6 +15,15 @@ pub struct ParsedPort {
     pub members: Vec<ParsedMember>,
 }
 
+impl From<&str> for ParsedPort {
+    fn from(name: &str) -> Self {
+        Self {
+            name: Some(name.into()),
+            ..Default::default()
+        }
+    }
+}
+
 impl PortUsage for ParsedPort {}
 impl OccurrenceUsage for ParsedPort {}
 impl Usage for ParsedPort {}

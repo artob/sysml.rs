@@ -22,8 +22,8 @@ impl ParsedPackage {
     pub fn with_members(name: impl ToString, members: Vec<ParsedMember>) -> Self {
         Self {
             name: Some(name.to_string()),
-            short_name: None,
             members,
+            ..Default::default()
         }
     }
 
@@ -33,6 +33,12 @@ impl ParsedPackage {
 
     pub fn add_member(&mut self, member: ParsedMember) {
         self.members.push(member);
+    }
+}
+
+impl From<&str> for ParsedPackage {
+    fn from(name: &str) -> Self {
+        Self::new(name)
     }
 }
 

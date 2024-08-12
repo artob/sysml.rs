@@ -16,6 +16,15 @@ pub struct ParsedBlock {
     pub members: Vec<ParsedMember>,
 }
 
+impl From<&str> for ParsedBlock {
+    fn from(name: &str) -> Self {
+        Self {
+            name: Some(name.into()),
+            ..Default::default()
+        }
+    }
+}
+
 impl BlockUsage for ParsedBlock {}
 impl PartUsage for ParsedBlock {}
 impl ItemUsage for ParsedBlock {}

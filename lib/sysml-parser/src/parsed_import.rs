@@ -11,9 +11,9 @@ pub struct ParsedImport {
 }
 
 impl ParsedImport {
-    pub fn new(qualified_name: QualifiedName) -> Self {
+    pub fn new(qualified_name: impl Into<QualifiedName>) -> Self {
         Self {
-            imported_name: qualified_name,
+            imported_name: qualified_name.into(),
             import_all: false,
             visibility: None,
         }
@@ -21,6 +21,12 @@ impl ParsedImport {
 
     pub fn is_wildcard(&self) -> bool {
         self.imported_name.last().map_or(false, |name| name == "*")
+    }
+}
+
+impl From<&str> for ParsedImport {
+    fn from(name: &str) -> Self {
+        Self::new(name)
     }
 }
 

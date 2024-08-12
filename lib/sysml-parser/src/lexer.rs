@@ -3,7 +3,7 @@
 use super::Keyword;
 use crate::{
     prelude::{String, Vec},
-    SyntaxError, SyntaxResult,
+    Span, SyntaxError, SyntaxResult,
 };
 use nom::{
     branch::alt,
@@ -14,10 +14,7 @@ use nom::{
     multi::many0,
     sequence::{delimited, pair, terminated},
 };
-use nom_locate::LocatedSpan;
 use sysml_model::QualifiedName;
-
-pub type Span<'a> = LocatedSpan<&'a str>;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, PartialOrd)]
 pub enum Token {
@@ -62,7 +59,7 @@ pub fn basic_name(input: Span) -> SyntaxResult<(Span, String)> {
         )),
     )(input)?;
 
-    Ok((input, String::from(*name.fragment())))
+    Ok((input, String::from(name.into_fragment())))
 }
 
 pub fn unrestricted_name(input: Span) -> SyntaxResult<(Span, String)> {
@@ -71,7 +68,7 @@ pub fn unrestricted_name(input: Span) -> SyntaxResult<(Span, String)> {
         delimited(char('\''), is_not("'"), char('\'')),
     )(input)?;
 
-    Ok((input, String::from(*name.fragment())))
+    Ok((input, String::from(name.into_fragment())))
 }
 
 pub fn reserved_keyword(input: Span) -> SyntaxResult<(Span, Keyword)> {

@@ -47,5 +47,11 @@ pub use parsed_port::*;
 pub mod parser;
 pub use parser::*;
 
+pub mod span;
+pub use span::*;
+
+pub mod spanned;
+pub use spanned::*;
+
 mod syntax_error;
 pub use syntax_error::*;

@@ -1,6 +1,6 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::lexer::Span;
+use crate::Span;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd)]
 pub enum Keyword {

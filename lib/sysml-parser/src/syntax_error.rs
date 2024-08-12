@@ -1,7 +1,9 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::lexer::Span;
-use crate::prelude::{fmt, vec, Vec};
+use crate::{
+    prelude::{fmt, vec, Vec},
+    Span,
+};
 
 #[cfg(feature = "std")]
 extern crate std;

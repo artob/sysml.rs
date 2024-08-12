@@ -15,6 +15,7 @@ pub use alloc::{
     borrow::ToOwned,
     boxed::Box,
     format,
+    ops::Range,
     rc::Rc,
     string::{String, ToString},
     vec,

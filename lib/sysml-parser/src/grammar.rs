@@ -4,7 +4,7 @@ use super::lexer::*;
 use crate::{
     prelude::{vec, String, Vec},
     ParsedAttribute, ParsedBlock, ParsedImport, ParsedMember, ParsedModel, ParsedPackage,
-    ParsedPort, SyntaxResult,
+    ParsedPort, Span, SyntaxResult,
 };
 use nom::{
     branch::alt,
@@ -51,7 +51,7 @@ pub fn import(input: Span) -> SyntaxResult<(Span, ParsedImport)> {
     let (input, _) = tag("import")(input)?;
     let (input, _) = multispace1(input)?;
     let (input, name) = map(take_while(|c| AsChar::as_char(c) != ';'), |span: Span| {
-        QualifiedName::from(*span.fragment())
+        QualifiedName::from(span.into_fragment())
     })(input)?;
     let (input, _) = char(';')(input)?;
 

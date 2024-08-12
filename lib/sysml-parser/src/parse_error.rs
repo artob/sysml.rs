@@ -1,22 +1,22 @@
 // This is free and unencumbered software released into the public domain.
 
-use crate::prelude::{fmt, String};
-use crate::SyntaxError;
+use crate::prelude::{fmt, String, ToString, Vec};
+use crate::{SyntaxError, SyntaxErrorKind};
 
 #[cfg(feature = "std")]
 extern crate std;
 
-pub type ParseResult<'a, T, E = ParseError<'a>> = Result<T, E>;
+pub type ParseResult<T, E = ParseError> = Result<T, E>;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum ParseError<'a> {
+pub enum ParseError {
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
-    Syntax(SyntaxError<'a>),
+    Syntax(Vec<(SyntaxErrorKind, String)>),
     Other(String),
 }
 
-impl fmt::Display for ParseError<'_> {
+impl fmt::Display for ParseError {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             ParseError::Io(kind) => write!(fmt, "IO error: {:?}", kind),
@@ -27,23 +27,29 @@ impl fmt::Display for ParseError<'_> {
 }
 
 #[cfg(feature = "std")]
-impl From<std::io::Error> for ParseError<'_> {
+impl From<std::io::Error> for ParseError {
     fn from(error: std::io::Error) -> Self {
         ParseError::Io(error.kind())
     }
 }
 
-impl<'a> From<nom::Err<SyntaxError<'a>>> for ParseError<'a> {
-    fn from(error: nom::Err<SyntaxError<'a>>) -> Self {
-        match error {
-            nom::Err::Error(e) | nom::Err::Failure(e) => ParseError::Syntax(e),
+impl<'a> From<nom::Err<SyntaxError<'a>>> for ParseError {
+    fn from(err: nom::Err<SyntaxError<'a>>) -> Self {
+        match err {
+            nom::Err::Error(error) | nom::Err::Failure(error) => ParseError::from(error),
             nom::Err::Incomplete(_) => unreachable!(),
         }
     }
 }
 
-impl<'a> From<SyntaxError<'a>> for ParseError<'a> {
+impl<'a> From<SyntaxError<'a>> for ParseError {
     fn from(error: SyntaxError<'a>) -> Self {
-        ParseError::Syntax(error)
+        ParseError::Syntax(
+            error
+                .errors
+                .iter()
+                .map(|(kind, span)| (kind.clone(), span.to_string()))
+                .collect(),
+        )
     }
 }

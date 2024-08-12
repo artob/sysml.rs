@@ -16,7 +16,7 @@ pub type Err<'a, E = SyntaxError<'a>> = nom::Err<E>;
 pub enum SyntaxErrorKind {
     Context(&'static str),
     Char(char),
-    Nom(nom::error::ErrorKind),
+    Combinator(nom::error::ErrorKind),
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -67,12 +67,14 @@ impl<'a, E> nom::error::FromExternalError<Span<'a>, E> for SyntaxError<'a> {
 impl<'a> nom::error::ParseError<Span<'a>> for SyntaxError<'a> {
     fn from_error_kind(input: Span<'a>, kind: nom::error::ErrorKind) -> Self {
         Self {
-            errors: vec![(SyntaxErrorKind::Nom(kind), input)],
+            errors: vec![(SyntaxErrorKind::Combinator(kind), input)],
         }
     }
 
     fn append(input: Span<'a>, kind: nom::error::ErrorKind, mut other: Self) -> Self {
-        other.errors.push((SyntaxErrorKind::Nom(kind), input));
+        other
+            .errors
+            .push((SyntaxErrorKind::Combinator(kind), input));
         other
     }
 

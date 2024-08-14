@@ -7,6 +7,7 @@
 //! ```
 
 #![no_std]
+#![deny(unsafe_code)]
 #![allow(unused)]
 
 pub use kerml::core::*;

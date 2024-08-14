@@ -8,6 +8,7 @@
 //! ```
 
 #![no_std]
+#![deny(unsafe_code)]
 #![allow(unused)]
 
 mod feature;

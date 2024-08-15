@@ -16,6 +16,7 @@ publish.workspace = true
 
 [features]
 default = ["std", "tracing"]
+error-stack = ["sysml-parser/error-stack"]
 std = ["sysml-model/std", "sysml-parser/std", "tracing?/std"]
 tracing = ["dep:tracing", "sysml-parser/tracing"]
 

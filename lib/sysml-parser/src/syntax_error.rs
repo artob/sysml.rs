@@ -30,6 +30,9 @@ impl<'a> SyntaxError<'a> {
     }
 }
 
+#[cfg(feature = "std")]
+impl<'a> std::error::Error for SyntaxError<'a> {}
+
 impl<'a> fmt::Display for SyntaxError<'a> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt.write_str("parse error") // TODO
@@ -84,3 +87,6 @@ impl<'a> nom::error::ParseError<Span<'a>> for SyntaxError<'a> {
         }
     }
 }
+
+#[cfg(feature = "error-stack")]
+impl error_stack::Context for SyntaxError<'static> {}

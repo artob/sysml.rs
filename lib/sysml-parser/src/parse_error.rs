@@ -16,6 +16,9 @@ pub enum ParseError {
     Other(String),
 }
 
+#[cfg(feature = "std")]
+impl std::error::Error for ParseError {}
+
 impl fmt::Display for ParseError {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -53,3 +56,6 @@ impl<'a> From<SyntaxError<'a>> for ParseError {
         )
     }
 }
+
+#[cfg(feature = "error-stack")]
+impl error_stack::Context for ParseError {}

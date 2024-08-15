@@ -24,5 +24,5 @@ tracing = ["dep:tracing"]
 error-stack = { version = "0.5", default-features = false, optional = true }
 nom = { version = "7", default-features = false, features = ["alloc"] }
 nom_locate = { version = "4.2", default-features = false, features = ["alloc"] }
-sysml-model = "0.2.0"
+sysml-model = "0.2.1"
 tracing = { version = "0.1", optional = true, default-features = false }

@@ -23,6 +23,6 @@ tracing = ["dep:tracing", "sysml-parser/tracing"]
 unstable = ["sysml-model/unstable", "sysml-parser/unstable"]
 
 [dependencies]
-sysml-model = "0.2.1"
-sysml-parser = "0.2.1"
+sysml-model = "0.2.2"
+sysml-parser = "0.2.2"
 tracing = { version = "0.1", default-features = false, optional = true }

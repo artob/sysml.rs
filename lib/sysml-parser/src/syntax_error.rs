@@ -88,5 +88,5 @@ impl<'a> nom::error::ParseError<Span<'a>> for SyntaxError<'a> {
     }
 }
 
-#[cfg(feature = "error-stack")]
+#[cfg(all(feature = "error-stack", not(feature = "std")))]
 impl error_stack::Context for SyntaxError<'static> {}

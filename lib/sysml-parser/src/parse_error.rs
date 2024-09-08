@@ -57,5 +57,5 @@ impl<'a> From<SyntaxError<'a>> for ParseError {
     }
 }
 
-#[cfg(feature = "error-stack")]
+#[cfg(all(feature = "error-stack", not(feature = "std")))]
 impl error_stack::Context for ParseError {}

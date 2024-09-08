@@ -16,7 +16,7 @@ publish.workspace = true
 
 [features]
 default = ["all", "std"]
-all = ["tracing"]
+all = ["error-stack", "tracing"]
 error-stack = ["dep:error-stack"]
 std = [
     "error-stack?/std",

@@ -22,4 +22,4 @@ unstable = ["kerml/unstable"]
 
 [dependencies]
 dogma = { version = "0.1", default-features = false }
-kerml = "0.2.2"
+kerml = "0.2.3"

@@ -15,12 +15,14 @@ categories.workspace = true
 publish.workspace = true
 
 [features]
-default = ["std", "tracing"]
+default = ["all", "std"]
+all = ["tracing"]
 error-stack = ["sysml-parser/error-stack"]
 std = ["sysml-model/std", "sysml-parser/std", "tracing?/std"]
 tracing = ["dep:tracing", "sysml-parser/tracing"]
+unstable = ["sysml-model/unstable", "sysml-parser/unstable"]
 
 [dependencies]
 sysml-model = "0.2.1"
 sysml-parser = "0.2.1"
-tracing = { version = "0.1", optional = true, default-features = false }
+tracing = { version = "0.1", default-features = false, optional = true }

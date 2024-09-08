@@ -15,8 +15,11 @@ categories.workspace = true
 publish.workspace = true
 
 [features]
-default = ["std"]
+default = ["all", "std"]
+all = []
 std = []
+unstable = ["kerml/unstable"]
 
 [dependencies]
+dogma = { version = "0.1", default-features = false }
 kerml = "0.2.1"

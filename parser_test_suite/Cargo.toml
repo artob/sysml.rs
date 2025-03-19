@@ -1,0 +1,21 @@
+[package]
+name = "parser_test_suite"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow = "1.0.97"
+glob = "0.3.2"
+sysml-parser = {path = "../lib/sysml-parser"}
+sysml-model = {path = "../lib/sysml-model"}
+comfy-table = "7.1.4"

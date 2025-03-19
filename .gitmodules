@@ -1,0 +1,3 @@
+[submodule "parser_test_suite/SysML-v2-Release"]
+	path = parser_test_suite/SysML-v2-Release
+	url = https://github.com/Systems-Modeling/SysML-v2-Release.git

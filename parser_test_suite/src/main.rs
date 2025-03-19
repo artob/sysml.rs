@@ -6,8 +6,8 @@ use glob::glob;
 
 fn main() -> anyhow::Result<()> {
     let sysml_submodule_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("SysML-v2-Release");
-    let kerml_path = sysml_submodule_path.join("kerml/src/examples/**/*.kerml");
-    let sysml_path = sysml_submodule_path.join("sysml/src/examples/**/*.sysml");
+    let kerml_path = sysml_submodule_path.join("**/*.kerml");
+    let sysml_path = sysml_submodule_path.join("**/*.sysml");
     let mut input_files = glob(&kerml_path.display().to_string())?
         .chain(glob(&sysml_path.display().to_string())?)
         .peekable();

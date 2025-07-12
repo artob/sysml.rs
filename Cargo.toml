@@ -1,7 +1,7 @@
 # See: https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = ["lib/*"]
+members = ["lib/*", "parser_test_suite"]
 default-members = ["lib/*"]
 resolver = "2"
 

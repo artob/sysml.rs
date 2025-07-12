@@ -10,10 +10,6 @@ impl QualifiedName {
         Self(names)
     }
 
-    pub fn to_string(&self) -> String {
-        self.0.join("::")
-    }
-
     pub fn to_vec(&self) -> Vec<String> {
         self.0.clone()
     }
@@ -63,6 +59,14 @@ impl From<&str> for QualifiedName {
 
 impl fmt::Display for QualifiedName {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string())
+        let mut iter = self.0.iter();
+        if let Some(s) = iter.next() {
+            f.write_str(s)?;
+        }
+        for s in iter {
+            f.write_str("::")?;
+            f.write_str(s)?;
+        }
+        Ok(())
     }
 }
